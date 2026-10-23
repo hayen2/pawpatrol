@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAWPATROL - Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="local-auth.js"></script>
+</head>
+
+<body class="dashboard-page" data-requires-login style="visibility: hidden;">
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <div class="logo-circle">🐶</div>
+            <div class="logo-text">
+                <h1>PAWPATROL</h1>
+                <span>MANAGEMENT SYSTEM</span>
+            </div>
+        </div>
+        <div class="admin">
+            <strong id="currentUserEmail">Employee</strong>
+            <small>Signed in</small>
+        </div>
+    </header>
+
+    <div class="layout">
+        <!-- SIDEBAR (SPA Links) -->
+        <aside>
+            <a href="#dashboard" data-route="dashboard" class="active">🏠 Dashboard</a>
+            <a href="#pets" data-route="pets">🐾 Pets</a>
+            <a href="#products" data-route="products">📦 Products</a>
+            <a href="#customers" data-route="customers">👥 Customers</a>
+            <a href="#sales" data-route="sales">💰 Sales</a>
+            <a href="#inventory" data-route="inventory">📊 Inventory</a>
+            <a href="#employees" data-route="employees">👨‍💼 Employees</a>
+            <a href="#reports" data-route="reports">📈 Reports</a>
+            <a href="#settings" data-route="settings">⚙️ Settings</a>
+            <button id="logoutButton" class="logout-button logout" type="button">↪ Sign out</button>
+        </aside>
+
+        <!-- MAIN -->
+        <main>
+            <!-- DASHBOARD SECTION -->
+            <section data-page="dashboard" class="page active">
+                <section class="dashboard-welcome">
+                    <div class="dashboard-welcome-copy">
+                        <span class="dashboard-welcome-label">PAWPATROL · SHOP OVERVIEW</span>
+                        <h2>DASHBOARD</h2>
+                        <p class="dashboard-intro">Your shop at a glance.</p>
+                    </div>
+                </section>
+
+                <div class="cards">
+                    <div class="card pink">
+                        <div class="icon">🐶</div>
+                        <div class="dashboard-card-content">
+                            <span>Total Pets</span>
+                            <strong id="totalPets">0</strong>
+                        </div>
+                    </div>
+                    <div class="card blue">
+                        <div class="icon">📦</div>
+                        <div class="dashboard-card-content">
+                            <span>Total Products</span>
+                            <strong id="totalProducts">0</strong>
+                        </div>
+                    </div>
+                    <div class="card green">
+                        <div class="icon">👤</div>
+                        <div class="dashboard-card-content">
+                            <span>Total Customers</span>
+                            <strong id="totalCustomers">0</strong>
+                        </div>
+                    </div>
+                    <div class="card orange">
+                        <div class="icon">💰</div>
+                        <div class="dashboard-card-content">
+                            <span>Today's Sales</span>
+                            <strong id="todaySales">₱0.00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tables">
+                    <section>
+                        <h3>🛒 Recent Sales</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Date</th></tr>
+                            </thead>
+                            <tbody id="recentSalesBody"></tbody>
+                        </table>
+                    </section>
+                    <section>
+                        <h3>⚠️ Low Stock Products</h3>
+                        <table>
+                            <thead>
+                                <tr><th>Product</th><th>Stock</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="lowStockBody"></tbody>
+                        </table>
+                    </section>
+                </div>
+            </section>
+
+            <!-- PETS SECTION -->
+            <section data-page="pets" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>PETS MANAGEMENT</h2>
+                        <p>Manage all pets available in the shop.</p>
+                    </div>
+                    <button class="add-button" id="addPetButton" type="button">+ Add Pet</button>
+                </div>
+                <div class="search-box">
+                    <input id="searchPetInput" type="search" placeholder="Search pets...">
+                    <button id="searchPetBtn" type="button">Search</button>
+                </div>
+                <section class="management-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Name</th><th>Type</th><th>Breed</th>
+                                <th>Age</th><th>Gender</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="petTableBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- PRODUCTS SECTION -->
+            <section data-page="products" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>PRODUCTS MANAGEMENT</h2>
+                        <p>Manage your pet shop products.</p>
+                    </div>
+                    <button class="add-button" id="addProductButton" type="button">+ Add Product</button>
+                </div>
+                <div class="search-box">
+                    <input id="searchProductInput" type="search" placeholder="Search products...">
+                    <button id="searchProductButton" type="button">Search</button>
+                </div>
+                <section class="management-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Name</th><th>Category</th>
+                                <th>Price</th><th>Stock</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- CUSTOMERS SECTION -->
+            <section data-page="customers" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>CUSTOMER MANAGEMENT</h2>
+                        <p>Manage your customers.</p>
+                    </div>
+                    <button class="add-button" id="addCustomerButton" type="button">+ Add Customer</button>
+                </div>
+                <div class="search-box">
+                    <input id="searchCustomerInput" type="search" placeholder="Search customers...">
+                    <button id="searchCustomerButton" type="button">Search</button>
+                </div>
+                <section class="management-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Name</th><th>Phone</th>
+                                <th>Email</th><th>Address</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- SALES SECTION -->
+            <section data-page="sales" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>SALES MANAGEMENT</h2>
+                        <p>Record and review sales.</p>
+                    </div>
+                    <button class="add-button" id="newSaleButton" type="button">+ New Sale</button>
+                </div>
+                <div class="search-box">
+                    <input id="searchSaleInput" type="search" placeholder="Search sales...">
+                    <button id="searchSaleButton" type="button">Search</button>
+                </div>
+                <section class="management-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invoice</th><th>Date</th><th>Customer</th>
+                                <th>Product</th><th>Qty</th><th>Price</th><th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- INVENTORY SECTION -->
+            <section data-page="inventory" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>INVENTORY MANAGEMENT</h2>
+                        <p>Review stock and record restocks.</p>
+                    </div>
+                </div>
+                <div class="cards inventory-cards">
+                    <div class="card pink"><div class="icon">📦</div><div><span>Products</span><strong id="inventoryProductCount">0</strong></div></div>
+                    <div class="card blue"><div class="icon">📊</div><div><span>Total Units</span><strong id="inventoryUnitCount">0</strong></div></div>
+                    <div class="card orange"><div class="icon">⚠️</div><div><span>Needs Attention</span><strong id="inventoryAttentionCount">0</strong></div></div>
+                </div>
+                <div class="search-box">
+                    <input id="searchInventoryInput" type="search" placeholder="Search inventory...">
+                    <button id="searchInventoryButton" type="button">Search</button>
+                </div>
+                <section class="management-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Product</th><th>Category</th>
+                                <th>Price</th><th>Stock</th><th>Status</th><th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- EMPLOYEES SECTION -->
+            <section data-page="employees" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>EMPLOYEE MANAGEMENT</h2>
+                        <p>Manage your team.</p>
+                    </div>
+                    <button class="add-button" id="addEmployeeButton" type="button">+ Add Employee</button>
+                </div>
+                <div class="search-box">
+                    <input id="searchEmployeeInput" type="search" placeholder="Search employees...">
+                    <button id="searchEmployeeButton" type="button">Search</button>
+                </div>
+                <section class="management-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Name</th><th>Role</th>
+                                <th>Phone</th><th>Email</th><th>Hire Date</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeeTableBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- REPORTS SECTION -->
+            <section data-page="reports" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>REPORTS</h2>
+                        <p>Sales performance and stock alerts.</p>
+                    </div>
+                </div>
+                <section class="report-filters">
+                    <form id="reportFilterForm">
+                        <div class="report-date-field">
+                            <label>From</label>
+                            <input type="date" id="reportStartDate">
+                        </div>
+                        <div class="report-date-field">
+                            <label>To</label>
+                            <input type="date" id="reportEndDate">
+                        </div>
+                        <button class="add-button" type="submit">Apply</button>
+                        <button class="cancel-button" id="clearReportDates" type="button">Show All</button>
+                    </form>
+                    <p id="reportPeriod" class="report-period">Showing all sales</p>
+                </section>
+                <div class="cards report-cards">
+                    <div class="card pink"><div class="icon">₱</div><div><span>Revenue</span><strong id="reportRevenue">₱0.00</strong></div></div>
+                    <div class="card blue"><div class="icon">🧾</div><div><span>Transactions</span><strong id="reportTransactionCount">0</strong></div></div>
+                    <div class="card green"><div class="icon">📦</div><div><span>Units Sold</span><strong id="reportUnitsSold">0</strong></div></div>
+                    <div class="card orange"><div class="icon">📊</div><div><span>Avg Sale</span><strong id="reportAverageSale">₱0.00</strong></div></div>
+                </div>
+                <section class="management-table report-table-section">
+                    <h3>Sales Transactions</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Product</th><th>Qty</th><th>Total</th></tr>
+                        </thead>
+                        <tbody id="reportSalesBody"></tbody>
+                    </table>
+                </section>
+                <section class="management-table report-table-section">
+                    <h3>Low Stock Products</h3>
+                    <table>
+                        <thead>
+                            <tr><th>Product</th><th>Category</th><th>Stock</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="reportLowStockBody"></tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- SETTINGS SECTION -->
+            <section data-page="settings" class="page">
+                <div class="page-header">
+                    <div>
+                        <h2>SYSTEM SETTINGS</h2>
+                        <p>Update shop information.</p>
+                    </div>
+                </div>
+                <section class="settings-section">
+                    <h3>Shop Information</h3>
+                    <form id="settingsForm" class="settings-form">
+                        <div class="settings-field"><label>Shop Name</label><input type="text" id="shopName"></div>
+                        <div class="settings-field"><label>Address</label><input type="text" id="shopAddress"></div>
+                        <div class="settings-field"><label>Phone</label><input type="tel" id="shopPhone"></div>
+                        <div class="settings-field"><label>Email</label><input type="email" id="shopEmail"></div>
+                        <div class="settings-field"><label>Version</label><input type="text" id="systemVersion" value="1.0" readonly></div>
+                        <div class="form-buttons settings-actions">
+                            <button class="cancel-button" id="resetSettings" type="button">Restore Defaults</button>
+                            <button class="save-button" type="submit">Save Settings</button>
+                        </div>
+                        <p id="settingsMessage" class="settings-message"></p>
+                    </form>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODALS (shared across pages) -->
+    <div id="customerModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="customerModalTitle">Add Customer</h2>
+                <button class="close-button" id="closeCustomerModal" type="button">×</button>
+            </div>
+            <form id="customerForm">
+                <input type="hidden" id="customerId">
+                <label>Name</label><input type="text" id="customerName" required>
+                <label>Phone</label><input type="tel" id="customerPhone" required>
+                <label>Email</label><input type="email" id="customerEmail" required>
+                <label>Address</label><input type="text" id="customerAddress" required>
+                <div class="form-buttons">
+                    <button class="cancel-button" id="cancelCustomerForm" type="button">Cancel</button>
+                    <button class="save-button" id="submitCustomerButton" type="submit">Add Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add similar modals for Pet, Product, Employee, Sale, Restock -->
+
+    <!-- ENTRY POINT -->
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
