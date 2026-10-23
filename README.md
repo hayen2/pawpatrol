@@ -1,169 +1,63 @@
-🐶 PAWPATROL — Pet Shop Management System
+# 🐶 PAWPATROL — Pet Shop Management System
 
-A modern, responsive, and database-driven Single Page Application (SPA) designed to streamline pet shop operations. PAWPATROL provides centralized management for pets, products, customers, sales, inventory, employees, and business reports through an intuitive interface powered by Supabase and PostgreSQL.
+PAWPATROL is a modern, responsive, and database-driven Single Page Application (SPA) designed to streamline pet shop operations. It provides a centralized platform for managing pets, products, customers, sales, inventory, employees, and business reports using a modular JavaScript architecture and Supabase-powered data storage.
 
-The system focuses on simplifying daily operations, improving inventory visibility, maintaining organized business records, and providing a foundation for reliable, data-driven management.
+## 🚀 Features
 
-🚀 Key Features
+- **Single Page Application (SPA)** — Navigate between modules without full-page browser reloads.
+- **Cloud Database Integration** — Integrate with Supabase and PostgreSQL for persistent data storage and retrieval.
+- **Employee Login** — Browser-side authentication logic using the Web Crypto API and PBKDF2.
+- **Responsive Interface** — Adaptable layouts for desktop, tablet, and mobile devices.
+- **CRUD Operations** — Create, read, update, and delete records across supported management modules.
+- **Sales and Inventory Integration** — Record sales and update product stock levels through the sales workflow.
+- **Dashboard Overview** — View business summaries, recent transactions, and low-stock indicators.
+- **Sales Reporting** — Review sales performance using date-range filters.
+- **Modular Architecture** — Organize routing, database utilities, page logic, and styles into separate files.
 
-Single Page Application (SPA) — Navigate between management modules without full-page browser reloads.
+## 📦 System Modules
 
-Cloud Database Integration — Store and retrieve business records using Supabase and PostgreSQL.
+### 1. Dashboard
+Provides an overview of shop operations, including total pets, products, and customers, today's sales, recent transactions, and low-stock alerts.
 
-Employee Login System — Provides a login interface with browser-side password hashing using the Web Crypto API and PBKDF2.
+### 2. Pets Management
+Manage pet records, including breed, age, gender, and availability status.
 
-Responsive User Interface — Designed to adapt to desktop, tablet, and mobile screen sizes.
+### 3. Products Management
+Maintain product information, pricing, and available stock quantities.
 
-CRUD Operations — Create, read, update, and delete supported records across management modules.
+### 4. Customers Management
+Organize customer records and contact information for shop transactions.
 
-Sales and Inventory Integration — Record transactions and update product stock levels as part of the sales workflow.
+### 5. Sales Management
+Record sales transactions, calculate transaction totals, and integrate product stock deductions into the sales workflow.
 
-Dashboard Overview — Display business summaries, recent transactions, and low-stock indicators.
+### 6. Inventory Management
+Monitor stock levels, identify low-stock products, and manage inventory quantities.
 
-Business Reporting — Review sales performance across selected date ranges.
+### 7. Employee Management
+Maintain employee records, roles, and contact information.
 
-Modular JavaScript Architecture — Separate page logic, database utilities, routing, and shared styling for easier maintenance.
+### 8. Reports
+Review sales summaries, filter transactions by date range, and analyze available business performance data.
 
-📦 System Modules
+### 9. Settings
+Manage shop information and available application configuration options.
 
-1. Dashboard
+## 🛠️ Technology Stack
 
-Provides an overview of shop operations, including:
+| Technology | Purpose |
+|---|---|
+| HTML5 | Application structure |
+| CSS3 | Styling and responsive layouts |
+| Vanilla JavaScript (ES6 Modules) | Application logic and modular functionality |
+| Vite | Development server and build tool |
+| Supabase | Cloud database platform and client integration |
+| PostgreSQL | Relational database |
+| Web Crypto API | Browser-side cryptographic operations using PBKDF2 |
 
-Total pets, products, and customers
+## 🏗️ Project Structure
 
-Today's sales summary
-
-Recent transactions
-
-Low-stock alerts
-
-2. Pets Management
-
-Manage pet records and monitor their availability.
-
-Pet name, breed, age, and gender
-
-Availability and status tracking
-
-Create, update, view, and delete pet records
-
-3. Products Management
-
-Maintain the shop's product catalog and pricing information.
-
-Product names and descriptions
-
-Prices and available stock
-
-Product record management
-
-4. Customers Management
-
-Maintain organized customer information for sales and recordkeeping.
-
-Customer names and contact information
-
-Customer record management
-
-Access to customer information associated with shop transactions, where supported
-
-5. Sales Management
-
-Record and manage product transactions.
-
-Transaction recording
-
-Product and quantity selection
-
-Sales total calculation
-
-Inventory deduction during successful sales processing
-
-Transaction history
-
-6. Inventory Management
-
-Monitor stock availability and support restocking activities.
-
-Current stock monitoring
-
-Low-stock identification
-
-Inventory quantity updates
-
-Restocking records or workflows, where implemented
-
-7. Employee Management
-
-Maintain employee records and organizational information.
-
-Employee names and contact details
-
-Employee roles and positions
-
-Employee record management
-
-8. Reports
-
-Review business performance using transaction data.
-
-Sales summaries
-
-Date-range filtering
-
-Historical sales review
-
-Overall performance indicators based on available records
-
-9. Settings
-
-Manage application and shop configuration.
-
-Shop information
-
-Application preferences
-
-Database-related configuration options, where applicable
-
-🛠️ Technology Stack
-
-Technology
-
-Purpose
-
-HTML5
-
-Application structure
-
-CSS3
-
-Responsive layout and interface styling
-
-Vanilla JavaScript (ES6 Modules)
-
-Application logic and modular functionality
-
-Vite
-
-Development server and build tooling
-
-Supabase
-
-Cloud database platform and client integration
-
-PostgreSQL
-
-Relational database management
-
-Web Crypto API
-
-Browser-side cryptographic operations for PBKDF2 password derivation
-
-🏗️ Application Architecture
-
-PAWPATROL follows a modular frontend architecture that separates application entry points, routing, database access, page-specific logic, and presentation styles.
-
+```text
 pawpatrol/
 ├── index.html
 ├── login.html
@@ -186,184 +80,126 @@ pawpatrol/
 │       └── settings.js
 ├── style.css
 ├── package.json
-└── .env
+├── .env
+└── .gitignore
+```
 
-Architecture Responsibilities
+## 🗄️ Database Integration
 
-index.html — Main SPA document containing the application layout and page sections.
+PAWPATROL uses Supabase and PostgreSQL to support persistent storage and retrieval of management records.
 
-login.html — Employee login interface.
+The application is organized around the following business entities:
 
-local-auth.js — Browser-side authentication-related logic.
+- Pets
+- Products
+- Customers
+- Sales
+- Inventory
+- Employees
+- Shop settings
 
-src/main.js — Application entry point and SPA navigation management.
+Database relationships, constraints, and access policies should be configured to maintain data consistency and protect sensitive information.
 
-src/supabase.js — Supabase client initialization and configuration.
+## 🔐 Security Considerations
 
-src/utils/storage.js — Shared database and CRUD utility functions.
+The project includes browser-side authentication logic using the Web Crypto API and PBKDF2.
 
-src/pages/ — Module-specific JavaScript logic for each management page.
+For production use, authentication must be supported by appropriate authorization and database access controls.
 
-style.css — Global styles, layout rules, and SPA presentation.
+Recommended security practices include:
 
-login.css — Login-specific styling.
+- Use a trusted authentication provider, such as Supabase Auth, for employee identity and session management.
+- Configure PostgreSQL Row Level Security (RLS) policies to enforce database permissions.
+- Validate input and business rules before modifying records.
+- Protect administrative operations with appropriate authorization checks.
+- Keep privileged credentials and server-side secrets out of frontend code.
+- Never commit environment files containing actual credentials or secrets.
 
-package.json — Project dependencies and development/build scripts.
+**Note:** Client-side authentication alone does not guarantee secure access to cloud database records. Actual security depends on the implemented authentication flow, database policies, and authorization controls.
 
-.env — Local environment configuration; must not be committed when it contains credentials or secrets.
+## ⚙️ Installation and Setup
 
-🗄️ Database Design
+### Prerequisites
 
-PAWPATROL uses Supabase with PostgreSQL to support persistent storage of shop management data.
+- [Node.js](https://nodejs.org/)
+- npm
+- A configured [Supabase](https://supabase.com/) project
 
-The database can organize records into related entities such as:
+### 1. Clone the Repository
 
-Pets
-
-Products
-
-Customers
-
-Sales and sale items
-
-Inventory records
-
-Employees
-
-Shop settings
-
-Relational constraints and transaction handling should be used where appropriate to preserve data consistency between sales and inventory.
-
-Data integrity considerations:
-
-Validate required fields and quantities before saving records.
-
-Prevent sales from reducing stock below zero.
-
-Ensure stock deductions and sale records are committed consistently.
-
-Use appropriate primary keys, foreign keys, and database constraints.
-
-Apply suitable database access policies to protect sensitive records.
-
-The final database schema and implemented constraints depend on the actual Supabase configuration.
-
-🔐 Authentication and Security
-
-The current project structure includes browser-side authentication logic using the Web Crypto API and PBKDF2.
-
-For production deployment, authentication must be evaluated separately from database authorization. Client-side password hashing and a protected login screen alone do not guarantee secure access to cloud data.
-
-Recommended production safeguards include:
-
-Supabase Auth or another trusted identity provider for employee authentication
-
-PostgreSQL Row Level Security (RLS) for enforcing database access permissions
-
-Role-based authorization for administrative and employee operations
-
-Input validation and appropriate error handling
-
-Secure handling of environment variables
-
-Server-side validation for sensitive operations
-
-Protection of privileged credentials and administrative actions
-
-Important: Never expose a Supabase service_role key or other privileged secret in frontend code. Browser applications should use only credentials intended for client-side access, alongside correctly configured database policies.
-
-⚙️ Installation and Setup
-
-Prerequisites
-
-Node.js
-
-npm
-
-A Supabase project
-
-Git (optional, for repository management)
-
-1. Clone the repository
-
+```bash
 git clone <repository-url>
 cd pawpatrol
+```
 
-Replace <repository-url> with the actual repository URL.
+Replace `<repository-url>` with the actual Git repository URL.
 
-2. Install dependencies
+### 2. Install Dependencies
 
+```bash
 npm install
+```
 
-3. Configure environment variables
+### 3. Configure Environment Variables
 
-Create a .env file in the project root using the variable names expected by your Supabase client configuration.
+Create a `.env` file in the project root and add the Supabase credentials required by your application.
 
-For example, if your application uses Vite's environment variable conventions:
+Example for a Vite frontend:
 
+```env
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_publishable_or_anon_key
+```
 
-Ensure the variable names match those referenced in src/supabase.js. Never place privileged server-side secrets in Vite frontend environment variables.
+Ensure the variable names match those used in `src/supabase.js`. Never expose a Supabase service role key in frontend code.
 
-4. Configure Supabase
+### 4. Configure the Database
 
-Create the required PostgreSQL tables.
+- Create the required PostgreSQL tables.
+- Configure database relationships and constraints.
+- Set up the appropriate Row Level Security policies.
+- Configure authentication and permissions according to the application's requirements.
 
-Configure table relationships and constraints.
+### 5. Run the Development Server
 
-Set up Row Level Security policies where appropriate.
-
-Configure authentication and access permissions according to the application's requirements.
-
-5. Start the development server
-
+```bash
 npm run dev
+```
 
-Open the local URL provided by Vite in your terminal.
+Open the local URL displayed in the terminal.
 
-6. Build for production
+### 6. Build for Production
 
+```bash
 npm run build
+```
 
 To preview the production build locally:
 
+```bash
 npm run preview
+```
 
-📱 Responsive Design
+## 📱 Responsive Design
 
-The interface is designed to support different screen sizes and usage environments.
+PAWPATROL is designed to provide a consistent management experience across different screen sizes, with layouts suited to desktop, tablet, and mobile use.
 
-Desktop layouts for day-to-day shop management
+## 🔮 Potential Future Improvements
 
-Tablet-friendly layouts for operational tasks
+- Centralized authentication and session management
+- Role-based access control
+- Transaction-safe sales and inventory updates
+- Inventory movement history and audit logs
+- Exportable reports in CSV or PDF format
+- Employee activity monitoring
+- Automated testing for critical workflows
+- Improved validation and error handling
+- Database backup and recovery procedures
 
-Mobile-responsive navigation and content
+## 🎯 Project Objective
 
-Consistent styling across management modules
+PAWPATROL aims to simplify pet shop operations by centralizing business records, organizing inventory, streamlining sales workflows, and providing accessible management reports through a responsive web application.
 
-🔮 Potential Future Improvements
+---
 
-Centralized employee authentication and session management
-
-Granular role-based access control
-
-Database-level transaction handling for sales and inventory
-
-Inventory movement history and stock adjustment auditing
-
-Exportable sales reports in CSV or PDF
-
-Employee activity logs
-
-Automated database backups and recovery procedures
-
-Automated tests for critical business workflows
-
-Improved validation, loading states, and error feedback
-
-🎯 Project Objective
-
-PAWPATROL aims to provide a centralized digital solution for managing the daily operations of a pet shop. By combining a modular frontend, cloud-based relational storage, and interconnected management workflows, the system provides a foundation for improving operational efficiency, inventory visibility, and business recordkeeping.
-
-PAWPATROL — Simplifying Pet Shop Management, One Paw at a Time. 🐾
+**PAWPATROL — Simplifying Pet Shop Management, One Paw at a Time.** 🐾
