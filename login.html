@@ -5,6 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Login - PAWPATROL</title>
+    
+    <!-- FORCE REDIRECT: Kung walang 'admin' sa URL, pumunta sa Customer Login -->
+    <script>
+        if (!window.location.search.includes('admin=true')) {
+            window.location.replace('/customer-login.html');
+        }
+    </script>
+
     <link rel="stylesheet" href="login.css">
     <script type="module" src="local-auth.js"></script>
 </head>
@@ -114,8 +122,13 @@
             </button>
             
             <p class="login-notice">This simple account is saved only in this browser. It is for demos, not sensitive or shared business data.</p>
+            
+            <!-- LINK PAPUNTANG CUSTOMER LOGIN -->
+            <a href="/customer-login.html" style="display: block; text-align: center; margin-top: 15px; font-size: 13px; color: var(--muted, #718096); text-decoration: none; font-weight: 600;">
+                ← Go to Customer Login
+            </a>
         </div>
 
     </main>
 </body>
-</html> 
+</html>
