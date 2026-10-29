@@ -1,7 +1,5 @@
-// src/pages/reports.js
 import { KEYS, loadList } from "../utils/storage.js";
 
-const LOW_STOCK = 5;
 let sales = [];
 let products = [];
 
@@ -14,10 +12,10 @@ function dateKey(v) {
 function renderSales(start = "", end = "") {
     const filtered = sales
         .filter((s) => {
-            const k = dateKey(s.date);
+            const k = dateKey(s.sold_at || s.date);
             return k && (!start || k >= start) && (!end || k <= end);
         })
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
+        .sort((a, b) => new Date(b.sold_at || b.date) - new Date(a.sold_at || a.date));
 
     const revenue = filtered.reduce((t, s) => t + Number(s.total), 0);
     const units = filtered.reduce((t, s) => t + Number(s.quantity), 0);
@@ -35,27 +33,16 @@ function renderSales(start = "", end = "") {
     } else {
         filtered.forEach((s) => {
             const row = document.createElement("tr");
-            [s.id, new Date(s.date).toLocaleString(), s.customerName, s.productName,
-             String(s.quantity), `₱${Number(s.total).toFixed(2)}`].forEach((t) => {
-                const td = document.createElement("td");
-                td.textContent = t;
-                row.appendChild(td);
+            [s.id, new Date(s.sold_at || s.date).toLocaleString(), s.customer_name || s.customerName, s.product_name || s.productName, String(s.quantity), `₱${Number(s.total).toFixed(2)}`].forEach((t) => {
+                const td = document.createElement("td"); td.textContent = t; row.appendChild(td);
             });
             body.appendChild(row);
         });
     }
-
-    document.getElementById("reportPeriod").textContent =
-        start && end ? `From ${start} to ${end}` :
-        start ? `From ${start}` :
-        end ? `Through ${end}` :
-        "Showing all sales";
 }
 
 function renderLowStock() {
-    const low = products
-        .filter((p) => Number(p.stock) <= LOW_STOCK)
-        .sort((a, b) => Number(a.stock) - Number(b.stock));
+    const low = products.filter((p) => Number(p.stock) <= 5).sort((a, b) => Number(a.stock) - Number(b.stock));
     const body = document.getElementById("reportLowStockBody");
     body.replaceChildren();
     if (low.length === 0) {
@@ -64,22 +51,19 @@ function renderLowStock() {
         low.forEach((p) => {
             const row = document.createElement("tr");
             [p.name, p.category, String(p.stock)].forEach((t) => {
-                const td = document.createElement("td");
-                td.textContent = t;
-                row.appendChild(td);
+                const td = document.createElement("td"); td.textContent = t; row.appendChild(td);
             });
             const statusTd = document.createElement("td");
             statusTd.className = "low";
             statusTd.textContent = Number(p.stock) === 0 ? "Out of Stock" : "Low Stock";
-            row.appendChild(statusTd);
-            body.appendChild(row);
+            row.appendChild(statusTd); body.appendChild(row);
         });
     }
 }
 
-export function initReportsPage() {
-    sales = loadList(KEYS.sales);
-    products = loadList(KEYS.products);
+export async function initReportsPage() {
+    sales = await loadList(KEYS.sales);
+    products = await loadList(KEYS.products);
 
     document.getElementById("reportFilterForm").onsubmit = (e) => {
         e.preventDefault();

@@ -1,55 +1,37 @@
-// src/pages/pets.js
-import { KEYS, loadList, saveList } from "../utils/storage.js";
+import { KEYS, loadList, saveList, deleteItem } from "../utils/storage.js";
 
 let pets = [];
 const tbody = document.getElementById("petTableBody");
 
-function statusClass(status) {
-    return status === "Available" ? "available" : "sold";
-}
+function statusClass(status) { return status === "Available" ? "available" : "sold"; }
 
 function render(searchText = "") {
     const kw = searchText.trim().toLowerCase();
     const filtered = pets.filter((p) =>
-        !kw || [p.name, p.type, p.breed, p.gender, p.status]
-            .some((v) => String(v).toLowerCase().includes(kw))
+        !kw || [p.name, p.type, p.breed, p.gender, p.status].some((v) => String(v).toLowerCase().includes(kw))
     );
-
     tbody.replaceChildren();
-
     if (filtered.length === 0) {
         const row = document.createElement("tr");
         const td = document.createElement("td");
         td.textContent = pets.length === 0 ? "No pets yet." : "No pets found.";
-        td.colSpan = 8;
-        td.style.textAlign = "center";
-        td.style.padding = "20px";
-        td.style.color = "#777";
-        row.appendChild(td);
-        tbody.appendChild(row);
-        return;
+        td.colSpan = 8; td.style.textAlign = "center"; td.style.padding = "20px"; td.style.color = "#777";
+        row.appendChild(td); tbody.appendChild(row); return;
     }
-
     filtered.forEach((pet) => {
         const row = document.createElement("tr");
         row.dataset.id = pet.id;
         [pet.id, pet.name, pet.type, pet.breed, pet.age, pet.gender].forEach((t) => {
-            const td = document.createElement("td");
-            td.textContent = t;
-            row.appendChild(td);
+            const td = document.createElement("td"); td.textContent = t; row.appendChild(td);
         });
-
         const statusTd = document.createElement("td");
         const badge = document.createElement("span");
         badge.className = `status ${statusClass(pet.status)}`;
         badge.textContent = pet.status;
-        statusTd.appendChild(badge);
-        row.appendChild(statusTd);
-
+        statusTd.appendChild(badge); row.appendChild(statusTd);
         const actions = document.createElement("td");
         actions.innerHTML = `<button class="edit-button">Edit</button> <button class="delete-button">Delete</button>`;
-        row.appendChild(actions);
-        tbody.appendChild(row);
+        row.appendChild(actions); tbody.appendChild(row);
     });
 }
 
@@ -61,9 +43,9 @@ function createId() {
     return `PET-${String(max + 1).padStart(3, "0")}`;
 }
 
-export function initPetsPage() {
+export async function initPetsPage() {
     if (!tbody) return;
-    pets = loadList(KEYS.pets);
+    pets = await loadList(KEYS.pets);
 
     const form = document.getElementById("petForm");
     const modal = document.getElementById("petModal");
@@ -85,16 +67,13 @@ export function initPetsPage() {
         modal.style.display = "flex";
     }
 
-    function closeModal() {
-        form.reset();
-        modal.style.display = "none";
-    }
+    function closeModal() { form.reset(); modal.style.display = "none"; }
 
     document.getElementById("addPetButton").onclick = () => openModal();
     document.getElementById("closePetModal").onclick = closeModal;
     document.getElementById("cancelPetForm").onclick = closeModal;
 
-    form.onsubmit = (e) => {
+    form.onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById("petId").value;
         const data = {
@@ -106,34 +85,34 @@ export function initPetsPage() {
             gender: document.getElementById("petGender").value,
             status: document.getElementById("petStatus").value,
         };
-        if (!data.name || !data.type || !data.breed || !data.age || !data.gender) {
-            return alert("Complete all fields.");
-        }
-        if (id) {
-            const i = pets.findIndex((p) => p.id === id);
-            if (i !== -1) pets[i] = data;
-        } else pets.push(data);
-        saveList(KEYS.pets, pets);
-        render(input.value);
-        closeModal();
+        if (!data.name || !data.type || !data.breed || !data.age || !data.gender) return alert("Complete all fields.");
+        
+        try {
+            await saveList(KEYS.pets, [data]);
+            pets = await loadList(KEYS.pets);
+            render(input.value);
+            closeModal();
+        } catch (err) { alert(`Error: ${err.message}`); }
     };
 
-    tbody.addEventListener("click", (e) => {
+    tbody.addEventListener("click", async (e) => {
         const btn = e.target.closest("button");
         const row = btn?.closest("tr");
         if (!btn || !row?.dataset.id) return;
         const pet = pets.find((p) => p.id === row.dataset.id);
         if (!pet) return;
+        
         if (btn.classList.contains("edit-button")) openModal(pet);
         if (btn.classList.contains("delete-button") && confirm(`Delete ${pet.name}?`)) {
-            pets = pets.filter((p) => p.id !== pet.id);
-            saveList(KEYS.pets, pets);
-            render(input.value);
+            try {
+                await deleteItem(KEYS.pets, pet.id);
+                pets = await loadList(KEYS.pets);
+                render(input.value);
+            } catch (err) { alert(`Error: ${err.message}`); }
         }
     });
 
     document.getElementById("searchPetBtn").onclick = () => render(input.value);
     input.oninput = () => render(input.value);
-
     render();
 }

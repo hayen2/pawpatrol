@@ -1,43 +1,30 @@
-// src/pages/customers.js
-import { KEYS, loadList, saveList } from "../utils/storage.js";
+import { KEYS, loadList, saveList, deleteItem } from "../utils/storage.js";
 
 let customers = [];
-
 const tbody = document.getElementById("customerTableBody");
 
 function render(searchText = "") {
     const kw = searchText.trim().toLowerCase();
     const filtered = customers.filter((c) =>
-        [c.id, c.name, c.phone, c.email, c.address].some((v) =>
-            String(v).toLowerCase().includes(kw)
-        )
+        !kw || [c.id, c.name, c.phone, c.email, c.address].some((v) => String(v).toLowerCase().includes(kw))
     );
-
     tbody.replaceChildren();
-
     if (filtered.length === 0) {
         const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.textContent = customers.length === 0 ? "No customers yet." : "No customers found.";
-        cell.colSpan = 6;
-        cell.style.textAlign = "center";
-        row.appendChild(cell);
-        tbody.appendChild(row);
-        return;
+        const td = document.createElement("td");
+        td.textContent = customers.length === 0 ? "No customers yet." : "No customers found.";
+        td.colSpan = 6; td.style.textAlign = "center"; td.style.padding = "20px"; td.style.color = "#777";
+        row.appendChild(td); tbody.appendChild(row); return;
     }
-
     filtered.forEach((c) => {
         const row = document.createElement("tr");
         row.dataset.id = c.id;
-        [c.id, c.name, c.phone, c.email, c.address].forEach((text) => {
-            const td = document.createElement("td");
-            td.textContent = text;
-            row.appendChild(td);
+        [c.id, c.name, c.phone, c.email, c.address].forEach((t) => {
+            const td = document.createElement("td"); td.textContent = t; row.appendChild(td);
         });
         const actions = document.createElement("td");
         actions.innerHTML = `<button class="edit-button">Edit</button> <button class="delete-button">Delete</button>`;
-        row.appendChild(actions);
-        tbody.appendChild(row);
+        row.appendChild(actions); tbody.appendChild(row);
     });
 }
 
@@ -49,10 +36,9 @@ function createId() {
     return `CUST-${String(max + 1).padStart(3, "0")}`;
 }
 
-export function initCustomersPage() {
+export async function initCustomersPage() {
     if (!tbody) return;
-
-    customers = loadList(KEYS.customers);
+    customers = await loadList(KEYS.customers);
 
     const form = document.getElementById("customerForm");
     const modal = document.getElementById("customerModal");
@@ -70,20 +56,15 @@ export function initCustomersPage() {
             document.getElementById("customerAddress").value = customer.address;
         }
         modal.style.display = "flex";
-        modal.setAttribute("aria-hidden", "false");
     }
 
-    function closeModal() {
-        form.reset();
-        modal.style.display = "none";
-        modal.setAttribute("aria-hidden", "true");
-    }
+    function closeModal() { form.reset(); modal.style.display = "none"; }
 
     document.getElementById("addCustomerButton").onclick = () => openModal();
     document.getElementById("closeCustomerModal").onclick = closeModal;
     document.getElementById("cancelCustomerForm").onclick = closeModal;
 
-    form.onsubmit = (e) => {
+    form.onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById("customerId").value;
         const data = {
@@ -94,34 +75,33 @@ export function initCustomersPage() {
             address: document.getElementById("customerAddress").value.trim(),
         };
         if (!data.name || !data.phone || !data.email || !data.address) return alert("Fill all fields.");
-
-        if (id) {
-            const i = customers.findIndex((c) => c.id === id);
-            if (i !== -1) customers[i] = data;
-        } else customers.push(data);
-
-        saveList(KEYS.customers, customers);
-        render(input.value);
-        closeModal();
+        
+        try {
+            await saveList(KEYS.customers, [data]); // Save directly to Supabase
+            customers = await loadList(KEYS.customers); // Refresh data
+            render(input.value);
+            closeModal();
+        } catch (err) { alert(`Error: ${err.message}`); }
     };
 
-    tbody.addEventListener("click", (e) => {
+    tbody.addEventListener("click", async (e) => {
         const btn = e.target.closest("button");
         const row = btn?.closest("tr");
         if (!btn || !row?.dataset.id) return;
         const c = customers.find((x) => x.id === row.dataset.id);
         if (!c) return;
-
+        
         if (btn.classList.contains("edit-button")) openModal(c);
         if (btn.classList.contains("delete-button") && confirm(`Delete ${c.name}?`)) {
-            customers = customers.filter((x) => x.id !== c.id);
-            saveList(KEYS.customers, customers);
-            render(input.value);
+            try {
+                await deleteItem(KEYS.customers, c.id);
+                customers = await loadList(KEYS.customers);
+                render(input.value);
+            } catch (err) { alert(`Error: ${err.message}`); }
         }
     });
 
     document.getElementById("searchCustomerButton").onclick = () => render(input.value);
     input.oninput = () => render(input.value);
-
     render();
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PAWPATROL - Management System</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./src/style.css">
     <script defer src="local-auth.js"></script>
 </head>
 
@@ -19,14 +19,30 @@
                 <span>MANAGEMENT SYSTEM</span>
             </div>
         </div>
-        <div class="admin">
-            <strong id="currentUserEmail">Employee</strong>
-            <small>Signed in</small>
+
+        <!-- INTERACTIVE PROFILE DROPDOWN -->
+        <div class="admin-profile-wrapper">
+            <button class="admin-profile-btn" id="profileToggleBtn" type="button">
+                <div class="admin-info">
+                    <strong id="currentUserEmail">Employee</strong>
+                    <small>Signed in</small>
+                </div>
+                <div class="profile-avatar">🐶</div>
+                <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <div class="profile-dropdown-menu" id="profileDropdownMenu">
+                <button id="logoutTriggerBtn" class="dropdown-logout-btn" type="button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    Sign out
+                </button>
+            </div>
         </div>
     </header>
 
     <div class="layout">
-        <!-- SIDEBAR (SPA Links) -->
+        <!-- SIDEBAR -->
         <aside>
             <a href="#dashboard" data-route="dashboard" class="active">🏠 Dashboard</a>
             <a href="#pets" data-route="pets">🐾 Pets</a>
@@ -37,10 +53,15 @@
             <a href="#employees" data-route="employees">👨‍💼 Employees</a>
             <a href="#reports" data-route="reports">📈 Reports</a>
             <a href="#settings" data-route="settings">⚙️ Settings</a>
-            <button id="logoutButton" class="logout-button logout" type="button">↪ Sign out</button>
+            
+            <!-- SIGN OUT SA SIDEBAR -->
+            <button id="sidebarLogoutBtn" class="logout-button" type="button" style="margin-top: auto;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                Sign out
+            </button>
         </aside>
 
-        <!-- MAIN -->
+        <!-- MAIN CONTENT -->
         <main>
             <!-- DASHBOARD SECTION -->
             <section data-page="dashboard" class="page active">
@@ -325,10 +346,10 @@
                 <section class="settings-section">
                     <h3>Shop Information</h3>
                     <form id="settingsForm" class="settings-form">
-                        <div class="settings-field"><label>Shop Name</label><input type="text" id="shopName"></div>
-                        <div class="settings-field"><label>Address</label><input type="text" id="shopAddress"></div>
-                        <div class="settings-field"><label>Phone</label><input type="tel" id="shopPhone"></div>
-                        <div class="settings-field"><label>Email</label><input type="email" id="shopEmail"></div>
+                        <div class="settings-field"><label>Shop Name</label><input type="text" id="shopName" required></div>
+                        <div class="settings-field"><label>Address</label><input type="text" id="shopAddress" required></div>
+                        <div class="settings-field"><label>Phone</label><input type="tel" id="shopPhone" required></div>
+                        <div class="settings-field"><label>Email</label><input type="email" id="shopEmail" required></div>
                         <div class="settings-field"><label>Version</label><input type="text" id="systemVersion" value="1.0" readonly></div>
                         <div class="form-buttons settings-actions">
                             <button class="cancel-button" id="resetSettings" type="button">Restore Defaults</button>
@@ -341,7 +362,8 @@
         </main>
     </div>
 
-    <!-- MODALS (shared across pages) -->
+    <!-- MODALS -->
+    <!-- 1. CUSTOMER MODAL -->
     <div id="customerModal" class="modal" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
@@ -362,7 +384,143 @@
         </div>
     </div>
 
-    <!-- Add similar modals for Pet, Product, Employee, Sale, Restock -->
+    <!-- 2. PET MODAL -->
+    <div id="petModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="petModalTitle">Add Pet</h2>
+                <button class="close-button" id="closePetModal" type="button">×</button>
+            </div>
+            <form id="petForm">
+                <input type="hidden" id="petId">
+                <label>Name</label><input type="text" id="petName" required>
+                <label>Type</label>
+                <select id="petType" required>
+                    <option value="">Select Type</option>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Bird">Bird</option>
+                    <option value="Other">Other</option>
+                </select>
+                <label>Breed</label><input type="text" id="petBreed" required>
+                <label>Age</label><input type="number" id="petAge" min="0" required>
+                <label>Gender</label>
+                <select id="petGender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+                <label>Status</label>
+                <select id="petStatus" required>
+                    <option value="Available">Available</option>
+                    <option value="Sold">Sold</option>
+                </select>
+                <div class="form-buttons">
+                    <button class="cancel-button" id="cancelPetForm" type="button">Cancel</button>
+                    <button class="save-button" id="submitPetButton" type="submit">Add Pet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. PRODUCT MODAL -->
+    <div id="productModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="productModalTitle">Add Product</h2>
+                <button class="close-button" id="closeProductModal" type="button">×</button>
+            </div>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <label>Name</label><input type="text" id="productName" required>
+                <label>Category</label><input type="text" id="productCategory" required>
+                <label>Price</label><input type="number" id="productPrice" step="0.01" min="0" required>
+                <label>Stock</label><input type="number" id="productStock" min="0" required>
+                <div class="form-buttons">
+                    <button class="cancel-button" id="cancelProductForm" type="button">Cancel</button>
+                    <button class="save-button" id="submitProductButton" type="submit">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. EMPLOYEE MODAL -->
+    <div id="employeeModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="employeeModalTitle">Add Employee</h2>
+                <button class="close-button" id="closeEmployeeModal" type="button">×</button>
+            </div>
+            <form id="employeeForm">
+                <input type="hidden" id="employeeId">
+                <label>Name</label><input type="text" id="employeeName" required>
+                <label>Role</label><input type="text" id="employeeRole" required>
+                <label>Phone</label><input type="tel" id="employeePhone" required>
+                <label>Email</label><input type="email" id="employeeEmail" required>
+                <label>Hire Date</label><input type="date" id="employeeHireDate" required>
+                <div class="form-buttons">
+                    <button class="cancel-button" id="cancelEmployeeForm" type="button">Cancel</button>
+                    <button class="save-button" id="submitEmployeeButton" type="submit">Add Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. SALE MODAL -->
+    <div id="saleModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="saleModalTitle">New Sale</h2>
+                <button class="close-button" id="closeSaleModal" type="button">×</button>
+            </div>
+            <form id="saleForm">
+                <label>Customer</label>
+                <select id="saleCustomer" required></select>
+                <label>Product</label>
+                <select id="saleProduct" required></select>
+                <label>Quantity</label>
+                <input type="number" id="saleQuantity" value="1" min="1" required>
+                <p id="saleTotal">Total: ₱0.00</p>
+                <div class="form-buttons">
+                    <button class="cancel-button" id="cancelSaleForm" type="button">Cancel</button>
+                    <button class="save-button" type="submit">Complete Sale</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. RESTOCK MODAL -->
+    <div id="restockModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="restockModalTitle">Restock</h2>
+                <button class="close-button" id="closeRestockModal" type="button">×</button>
+            </div>
+            <form id="restockForm">
+                <input type="hidden" id="restockProductId">
+                <p id="restockProductDetails"></p>
+                <label>Quantity to Add</label>
+                <input type="number" id="restockQuantity" value="1" min="1" required>
+                <div class="form-buttons">
+                    <button class="cancel-button" id="cancelRestockForm" type="button">Cancel</button>
+                    <button class="save-button" type="submit">Add to Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL -->
+    <div id="logoutConfirmModal" class="custom-modal-overlay">
+        <div class="custom-modal-content">
+            <div class="custom-modal-icon">⚠️</div>
+            <h3>Are you sure?</h3>
+            <p>Do you really want to sign out? You will need to enter your credentials again.</p>
+            <div class="custom-modal-buttons">
+                <button id="cancelLogoutBtn" class="custom-btn cancel">Cancel</button>
+                <button id="logoutButton" class="custom-btn confirm">Yes, Sign out</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ENTRY POINT -->
     <script type="module" src="./src/main.js"></script>

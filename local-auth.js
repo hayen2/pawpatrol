@@ -6,39 +6,24 @@
 
     async function signUp(email, password) {
         const accounts = getAccounts();
-
-        if (password.length < 8) {
-            throw new Error("Choose a password with at least 8 characters.");
-        }
-        if (accounts.some((item) => item.email === email)) {
-            throw new Error("An account with this email already exists. Sign in instead.");
-        }
+        if (password.length < 8) throw new Error("Choose a password with at least 8 characters.");
+        if (accounts.some((item) => item.email === email)) throw new Error("An account with this email already exists. Sign in instead.");
 
         const salt = bytesToHex(crypto.getRandomValues(new Uint8Array(16)));
-        const account = {
-            email,
-            salt,
-            passwordHash: await hashPassword(password, salt),
-        };
+        const account = { email, salt, passwordHash: await hashPassword(password, salt) };
 
         localStorage.setItem(ACCOUNTS_KEY, JSON.stringify([...accounts, account]));
         localStorage.setItem(SESSION_KEY, JSON.stringify({ email: account.email }));
-
         return account;
     }
 
     async function signIn(email, password) {
         const accounts = getAccounts();
         const account = accounts.find((item) => item.email === email);
-
-        if (!account) {
-            throw new Error("Email or password is incorrect.");
-        }
+        if (!account) throw new Error("Email or password is incorrect.");
 
         const hash = await hashPassword(password, account.salt);
-        if (hash !== account.passwordHash) {
-            throw new Error("Email or password is incorrect.");
-        }
+        if (hash !== account.passwordHash) throw new Error("Email or password is incorrect.");
 
         localStorage.setItem(SESSION_KEY, JSON.stringify({ email: account.email }));
         return account;
@@ -51,24 +36,17 @@
     function getCurrentUser() {
         const raw = localStorage.getItem(SESSION_KEY);
         if (!raw) return null;
-
         try {
             const session = JSON.parse(raw);
             return session && typeof session.email === "string" ? session : null;
-        } catch {
-            return null;
-        }
+        } catch { return null; }
     }
 
     function getAccounts() {
         const saved = localStorage.getItem(ACCOUNTS_KEY);
         if (saved === null) return [];
         const accounts = JSON.parse(saved);
-        if (!Array.isArray(accounts)) {
-            throw new Error(
-                'Saved account data is invalid. Clear the "petShopLocalAccounts" browser-storage entry to start over.'
-            );
-        }
+        if (!Array.isArray(accounts)) throw new Error('Saved account data is invalid. Clear the "petShopLocalAccounts" browser-storage entry to start over.');
         return accounts;
     }
 
@@ -77,23 +55,13 @@
     }
 
     async function hashPassword(password, salt) {
-        const key = await crypto.subtle.importKey(
-            "raw",
-            encoder.encode(password),
-            "PBKDF2",
-            false,
-            ["deriveBits"]
-        );
-        const bits = await crypto.subtle.deriveBits(
-            {
-                name: "PBKDF2",
-                salt: Uint8Array.from(salt.match(/.{2}/g), (b) => parseInt(b, 16)),
-                iterations: ITERATIONS,
-                hash: "SHA-256",
-            },
-            key,
-            256
-        );
+        const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+        const bits = await crypto.subtle.deriveBits({
+            name: "PBKDF2",
+            salt: Uint8Array.from(salt.match(/.{2}/g), (b) => parseInt(b, 16)),
+            iterations: ITERATIONS,
+            hash: "SHA-256",
+        }, key, 256);
         return bytesToHex(bits);
     }
 
@@ -122,7 +90,7 @@
 
         try {
             if (getCurrentUser()) {
-                window.location.replace("index.html");
+                window.location.replace("/index.html");
                 return;
             }
         } catch (error) {
@@ -140,7 +108,6 @@
 
         modeButton.addEventListener("click", () => {
             creatingAccount = !creatingAccount;
-
             if (creatingAccount) {
                 wrapper?.setAttribute("data-mode", "register");
                 if (modeLabel) modeLabel.textContent = "CREATE ACCOUNT";
@@ -156,7 +123,6 @@
                 submitButton.innerHTML = '<span class="icon">→</span> Sign in';
                 modeButton.innerHTML = '<span class="icon">👤+</span> Create an account';
             }
-
             passwordHelp.hidden = !creatingAccount;
             passwordInput.autocomplete = creatingAccount ? "new-password" : "current-password";
             passwordInput.minLength = creatingAccount ? 8 : 1;
@@ -173,14 +139,12 @@
             try {
                 const email = emailInput.value.trim().toLowerCase();
                 const password = passwordInput.value;
-
                 if (creatingAccount) {
                     await signUp(email, password);
                 } else {
                     await signIn(email, password);
                 }
-
-                window.location.replace("index.html");
+                window.location.replace("/index.html"); // Ayos dito
             } catch (error) {
                 showLoginError(error instanceof Error ? error.message : "Could not create account or sign in.");
                 submitButton.disabled = false;
@@ -195,7 +159,7 @@
         try {
             const user = getCurrentUser();
             if (!user) {
-                window.location.replace("login.html");
+                window.location.replace("/login.html"); // Ayos dito
                 return;
             }
 
@@ -210,7 +174,6 @@
                     e.stopPropagation();
                     profileDropdownMenu.classList.toggle("show");
                 });
-
                 document.addEventListener("click", (e) => {
                     if (!profileToggleBtn.contains(e.target) && !profileDropdownMenu.contains(e.target)) {
                         profileDropdownMenu.classList.remove("show");
@@ -229,31 +192,28 @@
                     profileDropdownMenu?.classList.remove("show");
                     logoutConfirmModal.classList.add("show");
                 });
-
                 sidebarLogoutBtn?.addEventListener("click", () => {
                     logoutConfirmModal.classList.add("show");
                 });
-
                 cancelLogoutBtn?.addEventListener("click", () => {
                     logoutConfirmModal.classList.remove("show");
                 });
-
                 actualLogoutBtn?.addEventListener("click", async () => {
                     await signOut();
-                    window.location.replace("login.html");
+                    window.location.replace("/login.html"); // Ayos dito (redirect)
                 });
             }
 
             window.addEventListener("storage", (event) => {
                 if (event.key === SESSION_KEY && event.newValue === null) {
-                    window.location.replace("login.html");
+                    window.location.replace("/login.html");
                 }
             });
 
             document.body.style.visibility = "visible";
         } catch (error) {
             window.alert(error instanceof Error ? error.message : "Could not verify the local account.");
-            window.location.replace("login.html");
+            window.location.replace("/login.html");
         }
     }
 

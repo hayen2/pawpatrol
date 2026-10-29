@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PAWPATROL – My Account</title>
+  <script>
+    try {
+      var t = localStorage.getItem('mp_theme');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="Customer.css" />
+</head>
+<body>
+  <a class="sr-only" href="#app">Skip to content</a>
+
+  <!-- TOPBAR (App Header) -->
+  <header class="topbar glass">
+    <div class="brand">
+      <span class="brand-mark" id="brand-mark"></span>
+      <span class="brand-name">PAWPATROL</span>
+    </div>
+    
+    <div class="topbar-actions">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme"></button>
+      <div class="user-profile">
+        <span id="topbar-avatar"></span>
+        <span id="topbar-name" class="user-name">Loading...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT (Sidebar + Content) -->
+  <div class="app-layout">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar glass">
+      <nav class="side-nav" id="nav" aria-label="Primary">
+        <a href="#browse" data-tab="browse" class="active"><span id="nav-browse"></span> Browse</a>
+        <a href="#cart" data-tab="cart"><span id="nav-cart"></span> Cart <span class="count-badge" id="cart-badge" hidden>0</span></a>
+        <a href="#pets" data-tab="pets"><span id="nav-pets"></span> My Pets</a>
+        <a href="#orders" data-tab="orders"><span id="nav-orders"></span> My Orders</a>
+        <a href="#account" data-tab="account"><span id="nav-account"></span> My Account</a>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="btn ghost block" id="btn-logout" style="color:var(--danger); justify-content: flex-start; padding-left: 10px;">
+          <span id="nav-logout"></span> Sign out
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="app" tabindex="-1" class="page container">
+      <!-- BROWSE -->
+      <section id="panel-browse" class="panel view active">
+        <div class="page-head">
+          <span class="eyebrow">Shop</span>
+          <h2 style="margin-top:10px;">Find something for your best friend</h2>
+          <p>Food, toys and companions, chosen with care.</p>
+        </div>
+        <div class="toolbar glass">
+          <div class="seg" id="shop-switch">
+            <button class="seg-btn active" data-view="products">Products</button>
+            <button class="seg-btn" data-view="pets">Pets for adoption</button>
+          </div>
+          <div class="field-inline grow">
+            <svg class="l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" id="search" placeholder="Search by name, breed or category" />
+          </div>
+        </div>
+        <div id="shop-grid" class="pgrid"></div>
+      </section>
+
+      <!-- CART -->
+      <section id="panel-cart" class="panel view" hidden>
+        <div class="page-head"><h2>Your cart</h2></div>
+        <div class="cart-layout">
+          <div id="cart-list" class="cart-list"></div>
+          <aside class="glass co-summary" id="cart-summary"></aside>
+        </div>
+      </section>
+
+      <!-- MY PETS -->
+      <section id="panel-pets" class="panel view" hidden>
+        <div class="page-head"><h2>My pets</h2></div>
+        <div class="pets-layout">
+          <form id="pet-form" class="glass co-section" style="display:flex; flex-direction:column; gap:16px;">
+            <h2>Register a pet</h2>
+            <div class="field"><input id="pet-name" name="name" required placeholder=" " /><label for="pet-name">Name</label></div>
+            <div class="field"><input id="pet-breed" name="breed" required placeholder=" " /><label for="pet-breed">Breed</label></div>
+            <div class="fgrid">
+              <div class="field"><input type="number" id="pet-age" name="age" required placeholder=" " /><label for="pet-age">Age (years)</label></div>
+              <div class="field">
+                <select id="pet-gender" name="gender" required>
+                  <option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option>
+                </select><label for="pet-gender">Gender</label>
+              </div>
+            </div>
+            <button type="submit" class="btn primary block" id="pet-submit">Save pet</button>
+          </form>
+          <div id="my-pets-list" class="pgrid"></div>
+        </div>
+      </section>
+
+      <!-- ORDERS -->
+      <section id="panel-orders" class="panel view" hidden>
+        <div class="page-head"><h2>My orders</h2></div>
+        <div id="orders-list" class="orders"></div>
+      </section>
+
+      <!-- ACCOUNT -->
+      <section id="panel-account" class="panel view" hidden>
+        <div class="page-head"><h2>My Account</h2></div>
+        <div class="account">
+          
+          <div class="glass profile">
+            <div class="avatar" id="avatar-holder"></div>
+            <div class="profile-text">
+              <h2 id="account-name">Loading...</h2>
+              <p id="account-email">...</p>
+            </div>
+          </div>
+          
+          <!-- PERSONAL INFORMATION FORM (4 Fields) -->
+          <form id="account-form" class="glass co-section" style="display:flex; flex-direction:column; gap:16px; width: 100%;">
+            <h2>Personal Information</h2>
+            
+            <div class="field">
+              <input id="profile-name" name="name" required placeholder=" " />
+              <label for="profile-name">Full Name</label>
+            </div>
+            
+            <div class="field">
+              <input id="profile-email" name="email" type="email" disabled placeholder=" " style="opacity: 0.7; cursor: not-allowed;" />
+              <label for="profile-email">Email (Cannot be changed)</label>
+            </div>
+            
+            <div class="field">
+              <input id="profile-phone" name="phone" type="tel" required placeholder=" " />
+              <label for="profile-phone">Phone Number</label>
+            </div>
+            
+            <div class="field">
+              <textarea id="profile-address" name="address" required rows="3" placeholder=" "></textarea>
+              <label for="profile-address">Delivery Address</label>
+            </div>
+
+            <button type="submit" class="btn primary block" id="save-profile-btn">Save Changes</button>
+          </form>
+
+          <!-- DASHBOARD TILES -->
+          <div class="tile-grid">
+            <button class="glass tile" data-tab="cart">
+              <span class="tile-icon" id="tile-cart"></span>
+              <span class="tile-title">Cart</span>
+              <span class="tile-hint">Review items before you order</span>
+            </button>
+            <button class="glass tile" data-tab="pets">
+              <span class="tile-icon" id="tile-pets"></span>
+              <span class="tile-title">My pets</span>
+              <span class="tile-hint">Register and manage your pets</span>
+            </button>
+            <button class="glass tile" data-tab="orders">
+              <span class="tile-icon" id="tile-orders"></span>
+              <span class="tile-title">My orders</span>
+              <span class="tile-hint">Track your past purchases</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+
+  <!-- CHECKOUT MODAL -->
+  <div id="checkout-modal" class="modal" style="display: none;">
+    <div class="modal-card glass">
+      <button id="close-checkout" class="icon-btn modal-x"></button>
+      <div class="co-section">
+        <h2>Checkout Details</h2>
+        <form id="checkout-form" class="co-form">
+          <div class="field"><input type="text" id="checkout-name" required placeholder=" " /><label for="checkout-name">Full Name</label></div>
+          <div class="field"><input type="tel" id="checkout-phone" required placeholder=" " /><label for="checkout-phone">Phone Number</label></div>
+          <div class="field"><textarea id="checkout-address" required rows="2" placeholder=" "></textarea><label for="checkout-address">Delivery Address / Pickup Note</label></div>
+          <div class="pay-grid">
+            <label class="pay-card"><input type="radio" name="payment" value="Cash on Delivery" checked /><span id="pay-cod"></span></label>
+            <label class="pay-card"><input type="radio" name="payment" value="Store Pick-up" /><span id="pay-store"></span></label>
+          </div>
+          <button type="submit" class="btn primary block lg" id="confirm-order-btn">Confirm Order - ₱<span id="checkout-total">0.00</span></button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/customer-main.js"></script>
+</body>
+</html>
