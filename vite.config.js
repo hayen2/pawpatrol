@@ -2,6 +2,16 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {
-    open: '/customer-login.html' // Ito ang bubukas pag nag-npm run dev ka
+    open: '/customer-login.html'
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        customerLogin: 'customer-login.html',
+        adminLogin: 'login.html',
+        customer: 'Customer.html'
+      }
+    }
   }
 });
